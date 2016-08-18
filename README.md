@@ -13,3 +13,10 @@ PButton_Led
 Led will glow on button press.
 Pin 51 is set as output. XGpioPs_ReadPin function is used to read value from button and this value is provided to Led.
 
+
+AXI Bram interface
+--------------------------------------------------------------------------------------------------------------------------------------
+Interfaced a bram memory with ARM cpu using AXI. Xil_io library was used to read and write data to bram.
+Xil_In8(addr) - to read 8bit data from memory location who's addr is mentioned in the parenthesis. This addr is part of Bram, hence we are reading from Bram memory.
+Xil_Out32(addr,data) - to write 32bit data to the memory location "addr".  
+
