@@ -1,0 +1,77 @@
+// axi_bram.c
+// v1.0
+// Company: Tau Science
+// Developer: Harsh Momaya
+// Platform: MicroZed Zynq FPGA
+// Purpose: Reading and writing to Bram memory
+
+// Include header files
+#include <stdio.h>
+#include "platform.h"
+//#include "xgpiops.h"
+#include "xil_io.h"
+#include "xparameters.h"
+#include "xbram.h"
+
+// external variables and functions
+
+// #define(s)
+
+// Global variables and constants
+
+// Prototype of private functions
+
+// Main function
+int main() {
+
+	int word1;	//int are 32 bit wide
+	int word2;
+	int word3;
+	int Status;
+	XBram my_bram;
+	XBram_Config *bram_config;
+
+	init_platform();
+
+	//Initializing BRAM.
+	//Not necessay in this case but if we are using ECC then it is required.
+	//Included jsut for the sake of understanding
+	bram_config = XBram_LookupConfig(XPAR_AXI_BRAM_CTRL_0_DEVICE_ID);
+	Status = XBram_CfgInitialize(&my_bram, bram_config, bram_config-> MemBaseAddress);
+
+	//Writing values at the memory location- addr followed by data to be written
+	//8bit, 16bits or 32 bits can be written at any memory location within 8K range.
+	//Following default values were inserted in the addr editor of vivado:
+	//Addr range: 8K
+	//Addr starting from 4000_0000H
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0, 0xAB);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 1, 0xFF);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 2, 0xAC);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 3, 0xFE);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 4, 0xAD);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 5, 0xFD);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 6, 0xAE);
+	Xil_Out8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 7, 0xFC);
+
+	Xil_Out16(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x10, 0xAB1F);
+	Xil_Out16(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x12, 0xFF2E);
+	Xil_Out16(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x14, 0xAC3D);
+	Xil_Out16(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x16, 0xFE4C);
+
+	Xil_Out32(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x20, 0xABCDEF10);
+
+	//Data read from particular memory location
+	while(1){
+	word1 = Xil_In8(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0);
+	word2 = Xil_In16(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x12);
+	word3 = Xil_In32(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 0x20);
+
+	printf("Word1 = 0x%08x \n", word1);
+	printf("Word2 = 0x%08x \n", word2);
+	printf("Word3 = 0x%08x \n", word3);
+
+	}
+
+	cleanup_platform();
+	return 0;
+}
