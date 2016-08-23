@@ -1,0 +1,40 @@
+// AXI_BRAM_GP0_GP1
+// Harsh Momaya
+// Tau Science
+// M Sadri Tutorials
+
+// In this design, MGP0 and 1 ports are used to connect to a dual port BRAM. GP0 port is used to write data 
+// and GP1 port is used to read data. Separate AXI_BRAM_CNTRL(s) and AXI_INTERCONNECT(s) are required to use
+// individual MGP ports.
+
+#include <stdio.h>
+#include "xparameters.h"
+#include "ps7_init.h"		// This file is present in ps7 folder which needs to be copied into your src folder of Application project along with ps7_init.c file
+#include "platform.h"
+#include "xil_io.h"
+
+int main(){
+	
+	int i;
+	
+	init_platform();
+	
+	// Along with PS, this function is also used to initialize the interface between PS and PL.
+	ps7_post_config();
+	
+	xil_printf("Hello World \n \r");
+	
+	for (i=0;i<10;i++) {
+		//xil_Out32(addr, u32 data);
+		xil_Out32(XPAR_AXI_BRAM_CTRL_0_S_AXI_BASEADDR + 4*i, i+ 0x1234ABCD);
+		
+	}
+	
+	for (i=0;i<10;i++) {
+		xil_printf ("Data at address %x is 0x%08x", XPAR_AXI_BRAM_CTRL_1_S_AXI_BASEADDR + 4*i, xil_In32(XPAR_AXI_BRAM_CTRL_1_S_AXI_BASEADDR + 4*i))
+																//1 bcoz we are reading from GP1 and wrote from GP0			
+	}
+	
+	cleanup_platform();
+	return 0;
+}
